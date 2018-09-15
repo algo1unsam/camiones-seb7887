@@ -1,0 +1,125 @@
+import cosas.*
+import transportes.*
+import empresa.*
+
+// PARTE UNO
+test "KnightRider: su peso es 500" {
+  assert.equals(500, knightRider.peso())
+}
+
+test "KnightRider: su peligrosidad es 10" {
+  assert.equals(10, knightRider.peligrosidad())
+}
+
+test "Bumblebee: su peso es 800" {
+  assert.equals(800, bumblebee.peso())
+}
+
+test "Bumblebee: su peligrosidad es de 15 si es auto" {
+  bumblebee.esRobot(false)
+  assert.equals(15, bumblebee.peligrosidad())
+}
+
+test "Bumblebee: su peligrosidad es de 30 si es robot" {
+  bumblebee.esRobot(true)
+  assert.equals(30, bumblebee.peligrosidad())
+}
+
+test "Ladrillos: si son dos ladrillos, su peso es 4" {
+  ladrillos.setCantidad(2)
+  assert.equals(4, ladrillos.peso())
+}
+
+test "Ladrillos: su peligrosidad siempre es de 2" {
+  assert.equals(2, ladrillos.peligrosidad())
+}
+
+// PARTE DOS
+test "Deposito: si cargamos a bumblebee y dos ladrillos, hay 2 cosas depositadas" {
+  var listaParaDeposito = []
+  ladrillos.setCantidad(2)
+  listaParaDeposito.add(ladrillos)
+  listaParaDeposito.add(bumblebee)
+  deposito.recibir(listaParaDeposito)
+  assert.equals(2, deposito.cosasRecibidas().size())
+}
+
+test "Deposito: si cargamos lo depositado en el camion, ya no hay mas cosas" {
+  var listaParaDeposito = []
+  ladrillos.setCantidad(2)
+  listaParaDeposito.add(ladrillos)
+  listaParaDeposito.add(bumblebee)
+  deposito.recibir(listaParaDeposito)
+  deposito.llenar(camion)
+  assert.equals(0, deposito.cosasRecibidas().size())
+  assert.equals(2, camion.carga().size())
+}
+
+test "Deposito: si la carga excede la carga maxima, hay excepcion" {
+  var listaParaDeposito = []
+  camion.cargaMaxima(1000)
+  ladrillos.setCantidad(1000)
+  listaParaDeposito.add(ladrillos)
+  listaParaDeposito.add(knightRider)
+  bumblebee.esRobot(false)
+  listaParaDeposito.add(bumblebee)
+  deposito.recibir(listaParaDeposito)
+  assert.equals(1000, camion.cargaMaxima())
+  assert.throwsException({ deposito.llenar(camion)})
+}
+
+// PARTE TRES
+test "Camion: si hay dos ladrillos y bumblebee, su carga es de 804" {
+  ladrillos.setCantidad(2)
+  camion.cargar(bumblebee)
+  camion.cargar(ladrillos)
+  assert.equals(804, camion.cargaActual())
+}
+
+test "Camion: si su carga maxima es 1000 y cargo a bumblebee, hay disponible 200" {
+  camion.cargaMaxima(1000)
+  camion.cargar(bumblebee)
+  assert.equals(200, camion.cargaDisponible())
+}
+
+test "Camion: si cargo KnightRider, un ladrillo y bumblebee, su cosa mas peligrosa es el primero" {
+  camion.cargar(knightRider)
+  camion.cargar(ladrillos)
+  bumblebee.esRobot(false)
+  camion.cargar(bumblebee)
+  assert.equals(knightRider, camion.cosaMasPeligrosaCargada())
+}
+
+test "Camion: si la ruta deseada tiene 20 de peligrosidad y bumblebee esta cargado, no se puede" {
+  bumblebee.esRobot(true)
+  camion.cargar(bumblebee)
+  assert.that(!camion.circularPorRuta(20))
+}
+
+// PARTE CUATRO
+test "Motoneta: puede llevar dos ladrillos" {
+  ladrillos.setCantidad(2)
+  motoneta.cargar(ladrillos)
+  assert.equals(1, motoneta.carga().size())
+}
+
+test "Motoneta: no puede llevar a KnightRider" {
+  motoneta.cargar(knightRider)
+  assert.equals(0, motoneta.carga().size())
+}
+
+// PARTE CINCO
+test "Embalaje de seguridad: si contenido KnighRider, su peso es 500 y peligrosidad 5" {
+  embalajeDeSeguridad.contenido(knightRider)
+  assert.equals(500, embalajeDeSeguridad.peso())
+  assert.equals(5, embalajeDeSeguridad.peligrosidad())
+}
+
+test "Contenedor: si cargo KnightRider y un ladrillo, su peso es 602 y su peligrosidad 10" {
+  var listaContenedor = []
+  listaContenedor.add(knightRider)
+  listaContenedor.add(ladrillos)
+  contenedorPortuario.contenido(listaContenedor)
+  assert.equals(602, contenedorPortuario.peso())
+  assert.equals(10, contenedorPortuario.peligrosidad())
+}
