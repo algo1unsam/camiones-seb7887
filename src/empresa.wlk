@@ -8,6 +8,7 @@ object deposito {
 
   method llenar(transporte) {
     cosasRecibidas.forEach({ unaCosa => transporte.cargar(unaCosa)})
+    // TODO y si no puedo cargar todo?
     cosasRecibidas.clear()
   }
 

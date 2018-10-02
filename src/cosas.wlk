@@ -6,6 +6,9 @@ object knightRider {
 
 }
 
+// TODO si auto y robot fueran objetos separados, se podria delegar la peligrosidad
+// en esos objetos, y por otro lado el objeto de la transformación queda separado de este
+// y podría tener su propio comportamiento
 object bumblebee {
 
   var property esRobot = true
